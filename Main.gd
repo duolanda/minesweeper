@@ -53,7 +53,7 @@ func _input(event:InputEvent) -> void:
 	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_LEFT:
 		mouse_left_click(event.position);
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT:
-		print("鼠标右键按下:", event.position);
+		mouse_right_click(event.position);
 
 func init_map():
 	var width:int = LEFT_MARGIN + gridWidth * TILE_SIZE + RIGHT_MARGIN;
@@ -139,8 +139,48 @@ func check_tile(tile:TileData):
 				if not is_have:
 					search_queue.append(n_tile);
 				
-	
-func search_around(tile_pos:Vector2) -> Array:
+
+func mouse_right_click(mouse_position:Vector2):
+	var local_position:Vector2 = tilemap.to_local(mouse_position);
+	var map_position:Vector2 = tilemap.world_to_map(local_position);
+	if map_position.x < 0 or map_position.x > gridWidth or map_position.y < 0 or map_position.y > gridHeight:
+		return;
+	var index:int = map_position.y * gridWidth + map_position.x;
+	var tile:TileData = totalsTiles[index];
+	if not tile.opened:
+		tile.flaged = not tile.flaged;
+		if tile.flaged:
+			pass
+		else:
+			pass
+		draw_single_tile(tile);
+	else:
+		var flagedCount:int = get_flaged_count(map_position);
+		if tile.aroundMine == flagedCount:
+			search_queue = search_around(map_position, true);
+			while search_queue.size() > 0:
+				check_tile(search_queue.pop_front());
+
+func get_flaged_count(tile_pos:Vector2) -> int:
+	var flagedCount:int = 0;
+	for r in RULE:
+		var search_position:Vector2 = Vector2(r.x+tile_pos.x, r.y+tile_pos.y);
+		if search_position.x < 0 or search_position.x >= gridWidth or search_position.y < 0 or search_position.y >= gridHeight:
+			continue;
+		#寻找的格子在数组里相对当前格子的偏移量
+		var search_offset_int = r.y * gridWidth + r.x; 
+		#当前格子在数组里的位置
+		var currentIndex:int = tile_pos.y * gridWidth +tile_pos.x;
+		#目标个字位置
+		var searchIndex:int = currentIndex + search_offset_int;
+		var searchTile:TileData = totalsTiles[searchIndex];
+		
+		if not searchTile.opened and searchTile.flaged:
+			flagedCount += 1;
+	return flagedCount;
+
+#返回不包含打开的、旗子和雷大于1的格子
+func search_around(tile_pos:Vector2, has_mine:bool = false) -> Array:
 	var arr:Array = [];
 	for r in RULE:
 		var search_position:Vector2 = Vector2(r.x+tile_pos.x, r.y+tile_pos.y);
@@ -154,7 +194,11 @@ func search_around(tile_pos:Vector2) -> Array:
 		var searchIndex:int = currentIndex + search_offset_int;
 		var searchTile:TileData = totalsTiles[searchIndex];
 		if not searchTile.opened and not searchTile.flaged:
-			arr.append(searchTile);
+			if has_mine == false:
+				if not searchTile.isMine:
+					arr.append(searchTile);
+			else:
+				arr.append(searchTile);
 		
 	return arr;
 
