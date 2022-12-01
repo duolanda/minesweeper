@@ -1,5 +1,12 @@
 extends Node2D
 
+var reset_normal = preload("res://assets/images/reset_normal.png");
+var reset_pressed = preload("res://assets/images/reset_pressed.png");
+var gameover_normal = preload("res://assets/images/gameover_normal.png");
+var gameover_pressed = preload("res://assets/images/gameover_pressed.png");
+var happy_normal = preload("res://assets/images/happy_normal.png");
+var happy_pressed = preload("res://assets/images/happy_pressed.png")
+
 #查找规则（统计格子周围哪几个格子有雷）
 const RULE:Array = [Vector2(-1,-1),Vector2(-1,0),Vector2(-1,1),Vector2(0,-1),Vector2(0,1),Vector2(1,-1),Vector2(1,0),Vector2(1,1)];
 # 边距
@@ -38,6 +45,7 @@ onready var mineLabel:Label = $Game/GUI/MarginContainer/HBoxContainer/mineBG/min
 onready var timeLabel:Label = $Game/GUI/MarginContainer/HBoxContainer/timeBG/timeLabel;
 onready var tilemap:TileMap = $Game/TileMap;
 onready var tick:Timer = $Tick;
+onready var resetBtn:TextureButton = $Game/GUI/MarginContainer/HBoxContainer/CenterContainer/resetButton;
 
 #格子的宽度
 var gridWidth:int = 16;
@@ -139,6 +147,7 @@ func mouse_left_click(mouse_position:Vector2):
 				search_queue = search_around(tile.position);
 				while search_queue.size() > 0:
 					check_tile(search_queue.pop_front());
+			check_win()
 
 func check_tile(tile:TileData):
 	if tile.isMine == true:
@@ -183,6 +192,7 @@ func mouse_right_click(mouse_position:Vector2):
 			search_queue = search_around(map_position, true);
 			while search_queue.size() > 0:
 				check_tile(search_queue.pop_front()); 
+		check_win()
 
 func get_flaged_count(tile_pos:Vector2) -> int:
 	var flagedCount:int = 0;
@@ -340,4 +350,4 @@ func set_cell(x:int, y:int, style:Vector2):
 func _on_Tick_timeout():
 	time += 1;
 	timeLabel.text = "%03d" % time;
-	check_win()
+	
