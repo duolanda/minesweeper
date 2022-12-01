@@ -25,6 +25,11 @@ const NUM8_POSITION:Vector2 = Vector2(0,2);
 const NORMAL_POSITION:Vector2 = Vector2(2,1);
 #旗子
 const FLAG_POSITION:Vector2 = Vector2(3,1);
+#被点击的雷
+const CLICK_MINE_POSITION:Vector2 = Vector2(6,1);
+#标记错的雷
+const WRONG_FLAG_MINE_POSITION:Vector2 = Vector2(4,1);
+
 
 onready var bg:NinePatchRect = $Game/BG;
 onready var game:Node2D = $Game;
@@ -231,7 +236,16 @@ func draw_single_tile(tile:TileData):
 		set_cell(tile.position.x, tile.position.y, NORMAL_POSITION);
 		
 func game_over(tile:TileData):
-	pass
+	draw_gameover_tile(tile);
+
+func draw_gameover_tile(click_tile:TileData):
+	for tile in totalsTiles:
+		if tile == click_tile:
+			set_cell(tile.position.x, tile.position.y, CLICK_MINE_POSITION);
+		elif tile.flaged and not tile.isMine:
+			set_cell(tile.position.x, tile.position.y, WRONG_FLAG_MINE_POSITION);
+		elif tile.isMine:
+			set_cell(tile.position.x, tile.position.y, UNFLAG_MINE_POSITION);
 	
 
 		
