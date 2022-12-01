@@ -37,6 +37,7 @@ onready var gui:Control = $Game/GUI;
 onready var mineLabel:Label = $Game/GUI/MarginContainer/HBoxContainer/mineBG/mineLabel;
 onready var timeLabel:Label = $Game/GUI/MarginContainer/HBoxContainer/timeBG/timeLabel;
 onready var tilemap:TileMap = $Game/TileMap;
+onready var tick:Timer = $Tick;
 
 #格子的宽度
 var gridWidth:int = 16;
@@ -48,6 +49,12 @@ var totalMineCount:int = 40;
 var totalsTiles:Array = [];
 #队列
 var search_queue:Array = [];
+#剩余雷的数量
+var remainMine:int = 0;
+#经过的时间
+var time:int = 0;
+#是否胜利
+var isWin:bool = false;
 
 func _ready() -> void:
 	init_map();
@@ -105,12 +112,21 @@ func init_game():
 	for tile in totalsTiles:
 		if tile.isMine == false:
 			tile.aroundMine = get_mine_count(tile.position);
+			
+	remainMine = totalMineCount;
+	mineLabel.text = "%03d" % remainMine;
+	time = 0
+	timeLabel.text = "%03d" % time;
 
 func mouse_left_click(mouse_position:Vector2):
 	var local_position:Vector2 = tilemap.to_local(mouse_position);
 	var map_position:Vector2 = tilemap.world_to_map(local_position);
 	if map_position.x < 0 or map_position.x > gridWidth or map_position.y < 0 or map_position.y > gridHeight:
 		return;
+	
+	if tick.is_stopped():
+		tick.start();
+		
 	var index:int = map_position.y * gridWidth + map_position.x;
 	var tile:TileData = totalsTiles[index];
 	if not tile.opened:
@@ -155,16 +171,18 @@ func mouse_right_click(mouse_position:Vector2):
 	if not tile.opened:
 		tile.flaged = not tile.flaged;
 		if tile.flaged:
-			pass
+			remainMine -= 1;
 		else:
-			pass
+			remainMine += 1;
+		mineLabel.text = "%03d" % remainMine;
 		draw_single_tile(tile);
-	else:
+	else: 
+		#鼠标中键功能
 		var flagedCount:int = get_flaged_count(map_position);
-		if tile.aroundMine == flagedCount:
+		if tile.aroundMine == flagedCount: 
 			search_queue = search_around(map_position, true);
 			while search_queue.size() > 0:
-				check_tile(search_queue.pop_front());
+				check_tile(search_queue.pop_front()); 
 
 func get_flaged_count(tile_pos:Vector2) -> int:
 	var flagedCount:int = 0;
@@ -234,10 +252,25 @@ func draw_single_tile(tile:TileData):
 		set_cell(tile.position.x, tile.position.y, FLAG_POSITION);
 	else:
 		set_cell(tile.position.x, tile.position.y, NORMAL_POSITION);
-		
+
+#胜利
+func check_win():
+	if remainMine == 0:
+		var unopenCount:int = 0;
+		for tile in totalsTiles:
+			if tile.opened == false:
+				unopenCount += 1;
+		if unopenCount == totalMineCount:
+			isWin = true;
+			if not tick.is_stopped():
+				tick.stop();
+			print("赢了");
+
+#失败
 func game_over(tile:TileData):
 	draw_gameover_tile(tile);
 
+#绘制失败时的格子
 func draw_gameover_tile(click_tile:TileData):
 	for tile in totalsTiles:
 		if tile == click_tile:
@@ -302,3 +335,9 @@ func draw_tiles():
 func set_cell(x:int, y:int, style:Vector2):
 	$Game/TileMap.set_cell(x, y, 0, false, false, false, style);
 	
+
+#计时器
+func _on_Tick_timeout():
+	time += 1;
+	timeLabel.text = "%03d" % time;
+	check_win()

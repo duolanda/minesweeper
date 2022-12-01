@@ -113,3 +113,7 @@ position = Vector2( 11, 51 )
 tile_set = SubResource( 2 )
 cell_size = Vector2( 32, 32 )
 format = 1
+
+[node name="Tick" type="Timer" parent="."]
+
+[connection signal="timeout" from="Tick" to="." method="_on_Tick_timeout"]
