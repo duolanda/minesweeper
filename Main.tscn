@@ -116,4 +116,5 @@ format = 1
 
 [node name="Tick" type="Timer" parent="."]
 
+[connection signal="pressed" from="Game/GUI/MarginContainer/HBoxContainer/CenterContainer/resetButton" to="." method="_on_resetButton_pressed"]
 [connection signal="timeout" from="Tick" to="." method="_on_Tick_timeout"]

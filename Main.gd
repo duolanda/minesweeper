@@ -192,7 +192,7 @@ func mouse_right_click(mouse_position:Vector2):
 			search_queue = search_around(map_position, true);
 			while search_queue.size() > 0:
 				check_tile(search_queue.pop_front()); 
-		check_win()
+	check_win() #放在判断外层，无论是标旗还是开格子都检测
 
 func get_flaged_count(tile_pos:Vector2) -> int:
 	var flagedCount:int = 0;
@@ -274,12 +274,19 @@ func check_win():
 			isWin = true;
 			if not tick.is_stopped():
 				tick.stop();
-			print("赢了");
+			resetBtn.texture_normal = happy_normal;
+			resetBtn.texture_hover = happy_normal;
+			resetBtn.texture_pressed = happy_pressed;
 
 #失败
 func game_over(tile:TileData):
 	draw_gameover_tile(tile);
-
+	resetBtn.texture_normal = gameover_normal;
+	resetBtn.texture_hover = gameover_normal;
+	resetBtn.texture_pressed = gameover_pressed;
+	if not tick.is_stopped():
+		tick.stop();
+		
 #绘制失败时的格子
 func draw_gameover_tile(click_tile:TileData):
 	for tile in totalsTiles:
@@ -341,13 +348,25 @@ func draw_tiles():
 #				8:
 #					style_position = NUM8_POSITION;	
 #			set_cell(tile.position.x, tile.position.y, style_position);
-			
+
+
+func reset():
+	resetBtn.texture_normal = reset_normal;
+	resetBtn.texture_hover = reset_normal;
+	resetBtn.texture_pressed = reset_pressed;
+	init_game();
+	draw_tiles();
+		
 func set_cell(x:int, y:int, style:Vector2):
 	$Game/TileMap.set_cell(x, y, 0, false, false, false, style);
 	
 
 #计时器
-func _on_Tick_timeout():
+func _on_Tick_timeout() -> void:
 	time += 1;
 	timeLabel.text = "%03d" % time;
 	
+
+
+func _on_resetButton_pressed() -> void:
+	reset();
