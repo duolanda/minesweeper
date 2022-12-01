@@ -62,7 +62,7 @@ var remainMine:int = 0;
 #经过的时间
 var time:int = 0;
 #是否胜利
-var isWin:bool = false;
+var isWinOrOver:bool = false;
 
 func _ready() -> void:
 	init_map();
@@ -70,9 +70,9 @@ func _ready() -> void:
 	draw_tiles();
 
 func _input(event:InputEvent) -> void:
-	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_LEFT:
+	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_LEFT and not isWinOrOver:
 		mouse_left_click(event.position);
-	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT:
+	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT and not isWinOrOver:
 		mouse_right_click(event.position);
 
 func init_map():
@@ -149,9 +149,10 @@ func mouse_left_click(mouse_position:Vector2):
 					check_tile(search_queue.pop_front());
 			check_win()
 
-func check_tile(tile:TileData):
+# 当 mouse_pos 是 0 的时候是左键，1 是右键
+func check_tile(tile:TileData, mouse_pos:int = 0):
 	if tile.isMine == true:
-		game_over(tile);
+		game_over(tile, mouse_pos);
 	else:
 		tile.opened = true;
 		draw_single_tile(tile);
@@ -191,7 +192,7 @@ func mouse_right_click(mouse_position:Vector2):
 		if tile.aroundMine == flagedCount: 
 			search_queue = search_around(map_position, true);
 			while search_queue.size() > 0:
-				check_tile(search_queue.pop_front()); 
+				check_tile(search_queue.pop_front(), 1); 
 	check_win() #放在判断外层，无论是标旗还是开格子都检测
 
 func get_flaged_count(tile_pos:Vector2) -> int:
@@ -271,7 +272,7 @@ func check_win():
 			if tile.opened == false:
 				unopenCount += 1;
 		if unopenCount == totalMineCount:
-			isWin = true;
+			isWinOrOver = true;
 			if not tick.is_stopped():
 				tick.stop();
 			resetBtn.texture_normal = happy_normal;
@@ -279,19 +280,23 @@ func check_win():
 			resetBtn.texture_pressed = happy_pressed;
 
 #失败
-func game_over(tile:TileData):
-	draw_gameover_tile(tile);
+func game_over(tile:TileData, mouse_pos:int=0):
+	draw_gameover_tile(tile, mouse_pos);
 	resetBtn.texture_normal = gameover_normal;
 	resetBtn.texture_hover = gameover_normal;
 	resetBtn.texture_pressed = gameover_pressed;
 	if not tick.is_stopped():
 		tick.stop();
+	isWinOrOver = true;
 		
 #绘制失败时的格子
-func draw_gameover_tile(click_tile:TileData):
+func draw_gameover_tile(click_tile:TileData, mouse_pos:int=0):
 	for tile in totalsTiles:
 		if tile == click_tile:
-			set_cell(tile.position.x, tile.position.y, CLICK_MINE_POSITION);
+			if mouse_pos == 0:
+				set_cell(tile.position.x, tile.position.y, CLICK_MINE_POSITION);
+			else:
+				set_cell(tile.position.x, tile.position.y, UNFLAG_MINE_POSITION);
 		elif tile.flaged and not tile.isMine:
 			set_cell(tile.position.x, tile.position.y, WRONG_FLAG_MINE_POSITION);
 		elif tile.isMine:
@@ -354,6 +359,7 @@ func reset():
 	resetBtn.texture_normal = reset_normal;
 	resetBtn.texture_hover = reset_normal;
 	resetBtn.texture_pressed = reset_pressed;
+	isWinOrOver = false;
 	init_game();
 	draw_tiles();
 		
