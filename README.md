@@ -3,7 +3,13 @@
 
 计划：
 
-- [ ] 跟着[[Godot 新手教程] 扫雷](https://www.bilibili.com/video/BV1yK4y1w7hF/)完成基本扫雷功能。
-- [ ] 完成高级难度功能
-- [ ] 增加双人要素
-- [ ] 增加类似 Minesweeper Arbiter 的功能
+- [x] 跟着[[Godot 新手教程] 扫雷](https://www.bilibili.com/video/BV1yK4y1w7hF/)完成基本扫雷功能。
+- [ ] Shift 代替右键+开格动画
+- [ ] 增加菜单栏
+- [ ] 增加自定义长宽、雷数功能
+- [ ] 增加记录功能
+  - [ ] 难度记录
+  - [ ] 时间记录
+- [ ] 增加双人场景
+- [ ] 图标、名称等完善
+- [ ] ~~增加类似 Minesweeper Arbiter 的功能~~

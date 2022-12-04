@@ -1,10 +1,19 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
-[ext_resource path="res://assets/images/MS_BG.png" type="Texture" id=1]
+[ext_resource path="res://assets/images/MS_BG_EDIT.png" type="Texture" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
 [ext_resource path="res://assets/images/reset_normal.png" type="Texture" id=3]
 [ext_resource path="res://assets/fonts/FX-LED.TTF" type="DynamicFontData" id=4]
 [ext_resource path="res://assets/images/minesweeperTile.png" type="Texture" id=5]
+[ext_resource path="res://assets/fonts/simhei.ttf" type="DynamicFontData" id=6]
+
+[sub_resource type="DynamicFont" id=4]
+size = 160
+use_filter = true
+font_data = ExtResource( 6 )
+
+[sub_resource type="Theme" id=5]
+default_font = SubResource( 4 )
 
 [sub_resource type="DynamicFont" id=1]
 size = 24
@@ -39,28 +48,41 @@ script = ExtResource( 2 )
 [node name="Game" type="Node2D" parent="."]
 
 [node name="BG" type="NinePatchRect" parent="Game"]
-margin_right = 321.0
-margin_bottom = 261.0
+margin_right = 136.0
+margin_bottom = 191.0
 texture = ExtResource( 1 )
 patch_margin_left = 12
-patch_margin_top = 52
+patch_margin_top = 72
 patch_margin_right = 12
 patch_margin_bottom = 12
 
 [node name="GUI" type="Control" parent="Game"]
-margin_right = 320.0
-margin_bottom = 51.0
+
+[node name="MenuButton" type="MenuButton" parent="Game/GUI"]
+margin_left = 10.0
+margin_top = 5.0
+margin_right = 342.0
+margin_bottom = 172.0
+rect_scale = Vector2( 0.1, 0.1 )
+theme = SubResource( 5 )
+custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
+custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0.32, 0.32, 0.32, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "菜单"
+items = [ "难度设置", null, 0, false, false, 0, 0, null, "", false ]
 
 [node name="MarginContainer" type="MarginContainer" parent="Game/GUI"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 14.0
-margin_top = 14.0
+margin_top = 34.0
 margin_right = -14.0
-margin_bottom = -15.0
+margin_bottom = 58.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Game/GUI/MarginContainer"]
-margin_right = 292.0
+margin_right = 110.0
 margin_bottom = 24.0
 
 [node name="mineBG" type="ColorRect" parent="Game/GUI/MarginContainer/HBoxContainer"]
@@ -80,21 +102,20 @@ valign = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="Game/GUI/MarginContainer/HBoxContainer"]
 margin_left = 43.0
-margin_right = 249.0
+margin_right = 67.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 
 [node name="resetButton" type="TextureButton" parent="Game/GUI/MarginContainer/HBoxContainer/CenterContainer"]
-margin_left = 91.0
-margin_right = 115.0
+margin_right = 24.0
 margin_bottom = 24.0
 texture_normal = ExtResource( 3 )
 texture_pressed = ExtResource( 3 )
 texture_hover = ExtResource( 3 )
 
 [node name="timeBG" type="ColorRect" parent="Game/GUI/MarginContainer/HBoxContainer"]
-margin_left = 253.0
-margin_right = 292.0
+margin_left = 71.0
+margin_right = 110.0
 margin_bottom = 24.0
 rect_min_size = Vector2( 39, 23 )
 color = Color( 0, 0, 0, 1 )
@@ -109,7 +130,7 @@ align = 1
 valign = 1
 
 [node name="TileMap" type="TileMap" parent="Game"]
-position = Vector2( 11, 51 )
+position = Vector2( 11, 71 )
 tile_set = SubResource( 2 )
 cell_size = Vector2( 32, 32 )
 format = 1

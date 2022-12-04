@@ -12,7 +12,7 @@ const RULE:Array = [Vector2(-1,-1),Vector2(-1,0),Vector2(-1,1),Vector2(0,-1),Vec
 # 边距
 const LEFT_MARGIN:int = 11;
 const RIGHT_MARGIN:int = 11;
-const TOP_MARGIN:int = 51;
+const TOP_MARGIN:int = 71;
 const BOTTOM_MARGIN:int=11;
 #格子的大小
 const TILE_SIZE:int = 32;
