@@ -63,6 +63,8 @@ var remainMine:int = 0;
 var time:int = 0;
 #是否胜利
 var isWinOrOver:bool = false;
+#需要呈现开雷动画的格子
+var anime_queue:Array = [];
 
 func _ready() -> void:
 	init_map();
@@ -70,10 +72,26 @@ func _ready() -> void:
 	draw_tiles();
 
 func _input(event:InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT and not isWinOrOver:
+		if event.shift:
+			mouse_right_click(event.position);
+			
 	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_LEFT and not isWinOrOver:
-		mouse_left_click(event.position);
+		if event.shift:
+			for t in anime_queue:
+				draw_single_tile(t);
+		else:
+			mouse_left_click(event.position);
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT and not isWinOrOver:
 		mouse_right_click(event.position);
+		
+	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_RIGHT and not isWinOrOver:
+		for t in anime_queue:
+			draw_single_tile(t);
+	
+#	if event is InputEventKey and event.pressed and event.scancode == KEY_SHIFT and not isWinOrOver:
+#		if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_LEFT and not isWinOrOver:
+#			mouse_right_click(event.position);
 
 func init_map():
 	var width:int = LEFT_MARGIN + gridWidth * TILE_SIZE + RIGHT_MARGIN;
@@ -193,6 +211,10 @@ func mouse_right_click(mouse_position:Vector2):
 			search_queue = search_around(map_position, true);
 			while search_queue.size() > 0:
 				check_tile(search_queue.pop_front(), 1); 
+		else:
+			anime_queue = search_around(map_position, true);
+			for t in anime_queue:
+				set_cell(t.position.x, t.position.y, NUM0_POSITION);
 	check_win() #放在判断外层，无论是标旗还是开格子都检测
 
 func get_flaged_count(tile_pos:Vector2) -> int:
