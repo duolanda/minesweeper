@@ -161,6 +161,8 @@ func mouse_left_click(mouse_position:Vector2):
 		isFirst = false;
 		var index:int = map_position.y * gridWidth + map_position.x;
 		var tile:TileData = totalsTiles[index];
+		if tile.flaged:
+			return
 		if tile.isMine:
 			for i in totalsTiles.size():
 				if not totalsTiles[i].isMine:
@@ -170,8 +172,6 @@ func mouse_left_click(mouse_position:Vector2):
 					#不然位置会跳
 					totalsTiles[index].position = totalsTiles[i].position;
 					totalsTiles[i].position = temp.position;
-					print(totalsTiles[i].position);
-					print(totalsTiles[index].position)
 					break;
 			for t in totalsTiles:
 				if t.isMine == false:
@@ -179,6 +179,8 @@ func mouse_left_click(mouse_position:Vector2):
 		
 	var index:int = map_position.y * gridWidth + map_position.x;
 	var tile:TileData = totalsTiles[index];
+	if tile.flaged:
+			return
 	if not tile.opened:
 		if tile.isMine:
 			game_over(tile);
