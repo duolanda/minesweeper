@@ -65,6 +65,8 @@ var time:int = 0;
 var isWinOrOver:bool = false;
 #需要呈现开雷动画的格子
 var anime_queue:Array = [];
+#是否第一次点击
+var isFirst:bool = true;
 
 func _ready() -> void:
 	init_map();
@@ -154,6 +156,26 @@ func mouse_left_click(mouse_position:Vector2):
 	
 	if tick.is_stopped():
 		tick.start();
+		
+	if isFirst: #如果第一次点到雷
+		isFirst = false;
+		var index:int = map_position.y * gridWidth + map_position.x;
+		var tile:TileData = totalsTiles[index];
+		if tile.isMine:
+			for i in totalsTiles.size():
+				if not totalsTiles[i].isMine:
+					var temp:TileData = totalsTiles[index];
+					totalsTiles[index] = totalsTiles[i]; 
+					totalsTiles[i] = temp;  
+					#不然位置会跳
+					totalsTiles[index].position = totalsTiles[i].position;
+					totalsTiles[i].position = temp.position;
+					print(totalsTiles[i].position);
+					print(totalsTiles[index].position)
+					break;
+			for t in totalsTiles:
+				if t.isMine == false:
+					t.aroundMine = get_mine_count(t.position);
 		
 	var index:int = map_position.y * gridWidth + map_position.x;
 	var tile:TileData = totalsTiles[index];
@@ -384,6 +406,7 @@ func reset():
 	resetBtn.texture_hover = reset_normal;
 	resetBtn.texture_pressed = reset_pressed;
 	isWinOrOver = false;
+	isFirst = true;
 	init_game();
 	draw_tiles();
 		
