@@ -154,33 +154,32 @@ func mouse_left_click(mouse_position:Vector2):
 	if map_position.x < 0 or map_position.x >= gridWidth or map_position.y < 0 or map_position.y >= gridHeight:
 		return;
 	
+	var index:int = map_position.y * gridWidth + map_position.x;
+	var tile:TileData = totalsTiles[index];
+	if tile.flaged:
+			return
+	
 	if tick.is_stopped():
 		tick.start();
 		
 	if isFirst: #如果第一次点到雷
 		isFirst = false;
-		var index:int = map_position.y * gridWidth + map_position.x;
-		var tile:TileData = totalsTiles[index];
-		if tile.flaged:
-			return
 		if tile.isMine:
+			print("first")
 			for i in totalsTiles.size():
 				if not totalsTiles[i].isMine:
-					var temp:TileData = totalsTiles[index];
-					totalsTiles[index] = totalsTiles[i]; 
-					totalsTiles[i] = temp;  
+					totalsTiles[index].isMine = false;
+					totalsTiles[i].isMine = true;
 					#不然位置会跳
-					totalsTiles[index].position = totalsTiles[i].position;
-					totalsTiles[i].position = temp.position;
+#					totalsTiles[index].position = totalsTiles[i].position;
+#					totalsTiles[i].position = temp.position;
 					break;
 			for t in totalsTiles:
 				if t.isMine == false:
 					t.aroundMine = get_mine_count(t.position);
-		
-	var index:int = map_position.y * gridWidth + map_position.x;
-	var tile:TileData = totalsTiles[index];
-	if tile.flaged:
-			return
+			tile = totalsTiles[index]
+			print(tile.isMine)
+
 	if not tile.opened:
 		if tile.isMine:
 			game_over(tile);
