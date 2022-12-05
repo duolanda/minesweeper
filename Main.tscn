@@ -48,7 +48,7 @@ script = ExtResource( 2 )
 [node name="Game" type="Node2D" parent="."]
 
 [node name="BG" type="NinePatchRect" parent="Game"]
-margin_right = 136.0
+margin_right = 146.0
 margin_bottom = 191.0
 texture = ExtResource( 1 )
 patch_margin_left = 12
@@ -82,7 +82,7 @@ margin_right = -14.0
 margin_bottom = 58.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Game/GUI/MarginContainer"]
-margin_right = 110.0
+margin_right = 118.0
 margin_bottom = 24.0
 
 [node name="mineBG" type="ColorRect" parent="Game/GUI/MarginContainer/HBoxContainer"]
@@ -101,8 +101,8 @@ align = 1
 valign = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="Game/GUI/MarginContainer/HBoxContainer"]
-margin_left = 43.0
-margin_right = 67.0
+margin_left = 47.0
+margin_right = 71.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 
@@ -114,8 +114,8 @@ texture_pressed = ExtResource( 3 )
 texture_hover = ExtResource( 3 )
 
 [node name="timeBG" type="ColorRect" parent="Game/GUI/MarginContainer/HBoxContainer"]
-margin_left = 71.0
-margin_right = 110.0
+margin_left = 79.0
+margin_right = 118.0
 margin_bottom = 24.0
 rect_min_size = Vector2( 39, 23 )
 color = Color( 0, 0, 0, 1 )

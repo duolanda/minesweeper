@@ -47,9 +47,9 @@ onready var tilemap:TileMap = $Game/TileMap;
 onready var tick:Timer = $Tick;
 onready var resetBtn:TextureButton = $Game/GUI/MarginContainer/HBoxContainer/CenterContainer/resetButton;
 
-#格子的宽度
+#格子的横向数量
 var gridWidth:int = 16;
-#各自的高度
+#格子的纵向数量
 var gridHeight:int = 16;
 #地雷的数量
 var totalMineCount:int = 40;
@@ -107,6 +107,8 @@ func init_game():
 	var totalCount:int = gridWidth*gridHeight;
 	var tempMineCount:int = totalMineCount;
 	var totals:Array = [];
+	search_queue = []
+	anime_queue = []
 	for i in totalCount:
 		if tempMineCount >  0:
 			totals.append("mine");
@@ -147,7 +149,7 @@ func init_game():
 func mouse_left_click(mouse_position:Vector2):
 	var local_position:Vector2 = tilemap.to_local(mouse_position);
 	var map_position:Vector2 = tilemap.world_to_map(local_position);
-	if map_position.x < 0 or map_position.x > gridWidth or map_position.y < 0 or map_position.y > gridHeight:
+	if map_position.x < 0 or map_position.x >= gridWidth or map_position.y < 0 or map_position.y >= gridHeight:
 		return;
 	
 	if tick.is_stopped():
@@ -192,7 +194,7 @@ func check_tile(tile:TileData, mouse_pos:int = 0):
 func mouse_right_click(mouse_position:Vector2):
 	var local_position:Vector2 = tilemap.to_local(mouse_position);
 	var map_position:Vector2 = tilemap.world_to_map(local_position);
-	if map_position.x < 0 or map_position.x > gridWidth or map_position.y < 0 or map_position.y > gridHeight:
+	if map_position.x < 0 or map_position.x >= gridWidth or map_position.y < 0 or map_position.y >= gridHeight:
 		return;
 	var index:int = map_position.y * gridWidth + map_position.x;
 	var tile:TileData = totalsTiles[index];
