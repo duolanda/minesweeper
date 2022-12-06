@@ -46,13 +46,14 @@ onready var timeLabel:Label = $Game/GUI/MarginContainer/HBoxContainer/timeBG/tim
 onready var tilemap:TileMap = $Game/TileMap;
 onready var tick:Timer = $Tick;
 onready var resetBtn:TextureButton = $Game/GUI/MarginContainer/HBoxContainer/CenterContainer/resetButton;
+onready var menuButton:MenuButton = $Game/GUI/MenuButton;
 
 #格子的横向数量
-var gridWidth:int = 16;
+var gridWidth:int = 30;
 #格子的纵向数量
 var gridHeight:int = 16;
 #地雷的数量
-var totalMineCount:int = 40;
+var totalMineCount:int = 99;
 #全部格子
 var totalsTiles:Array = [];
 #队列
@@ -97,11 +98,13 @@ func _input(event:InputEvent) -> void:
 
 func init_map():
 	var width:int = LEFT_MARGIN + gridWidth * TILE_SIZE + RIGHT_MARGIN;
-	var height:int = TOP_MARGIN + gridHeight * TILE_SIZE +BOTTOM_MARGIN;
+	var height:int = TOP_MARGIN + gridHeight * TILE_SIZE + BOTTOM_MARGIN;
 	bg.rect_size = Vector2(width, height);
 	
-	var windowSize:Vector2 = OS.window_size;
-	game.position = Vector2((windowSize.x-width)/2, (windowSize.y-height)/2)
+	OS.set_window_size(Vector2(width, height))
+
+#	var windowSize:Vector2 = OS.window_size;
+#	game.position = Vector2((windowSize.x-width)/2, (windowSize.y-height)/2)
 	gui.rect_size.x = width;
 
 func init_game():
@@ -111,6 +114,12 @@ func init_game():
 	var totals:Array = [];
 	search_queue = []
 	anime_queue = []
+	
+	#弹出菜单
+	var popup = menuButton.get_popup();
+	popup.connect("id_pressed", self, "game_menu");
+	
+#	tilemap.set_cell_size(Vector2(gridWidth, gridHeight));
 	for i in totalCount:
 		if tempMineCount >  0:
 			totals.append("mine");
@@ -123,8 +132,8 @@ func init_game():
 	# 将随机好的雷和格子加进来
 	totalsTiles = [];
 	var index:int = 0;
-	for y in gridWidth:
-		for x in gridHeight:
+	for y in gridHeight:
+		for x in gridWidth:
 			var tile:TileData = TileData.new();
 			tile.position = Vector2(x,y);
 			if totals[index] == "mine":
@@ -165,7 +174,6 @@ func mouse_left_click(mouse_position:Vector2):
 	if isFirst: #如果第一次点到雷
 		isFirst = false;
 		if tile.isMine:
-			print("first")
 			for i in totalsTiles.size():
 				if not totalsTiles[i].isMine:
 					totalsTiles[index].isMine = false;
@@ -178,7 +186,6 @@ func mouse_left_click(mouse_position:Vector2):
 				if t.isMine == false:
 					t.aroundMine = get_mine_count(t.position);
 			tile = totalsTiles[index]
-			print(tile.isMine)
 
 	if not tile.opened:
 		if tile.isMine:
@@ -373,33 +380,15 @@ func get_mine_count(tile_pos:Vector2):
 func draw_tiles():
 	for tile in totalsTiles:
 		set_cell(tile.position.x, tile.position.y, NORMAL_POSITION);
+
+func init_custom_game(width:int=9, height:int=9 , mine:int=10):
+	gridWidth = width;
+	gridHeight = height;
+	totalMineCount = mine;
 	
-	
-#	for tile in totalsTiles:
-#		if tile.isMine:
-#			set_cell(tile.position.x, tile.position.y, UNFLAG_MINE_POSITION);
-#		else:
-#			var style_position:Vector2;
-#			match tile.aroundMine:
-#				0:
-#					style_position = NUM0_POSITION;
-#				1:
-#					style_position = NUM1_POSITION;
-#				2:
-#					style_position = NUM2_POSITION;
-#				3:
-#					style_position = NUM3_POSITION;
-#				4:
-#					style_position = NUM4_POSITION;
-#				5:
-#					style_position = NUM5_POSITION;
-#				6:
-#					style_position = NUM6_POSITION;
-#				7:
-#					style_position = NUM7_POSITION;
-#				8:
-#					style_position = NUM8_POSITION;	
-#			set_cell(tile.position.x, tile.position.y, style_position);
+	tilemap.clear();
+	init_map();
+	reset();
 
 
 func reset():
@@ -412,8 +401,21 @@ func reset():
 	draw_tiles();
 		
 func set_cell(x:int, y:int, style:Vector2):
-	$Game/TileMap.set_cell(x, y, 0, false, false, false, style);
-	
+	tilemap.set_cell(x, y, 0, false, false, false, style);
+
+#游戏菜单
+func game_menu(id):
+	match id:
+		0:
+			init_custom_game(9,9,10);
+		1:
+			init_custom_game(16,16,40);
+		2:
+			init_custom_game(30,16,99);
+		3:
+			print("自定义");
+		4:
+			print("记录");
 
 #计时器
 func _on_Tick_timeout() -> void:
@@ -424,3 +426,8 @@ func _on_Tick_timeout() -> void:
 
 func _on_resetButton_pressed() -> void:
 	reset();
+
+
+#func _on_MenuButton_pressed():
+#	get_tree().paused = true
+
