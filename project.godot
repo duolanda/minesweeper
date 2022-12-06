@@ -22,6 +22,7 @@ _global_script_class_icons={
 
 config/name="Minesweeper"
 run/main_scene="res://Main.tscn"
+boot_splash/show_image=false
 config/icon="res://icon.png"
 
 [display]

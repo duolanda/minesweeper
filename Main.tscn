@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://assets/images/MS_BG_EDIT.png" type="Texture" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
@@ -42,6 +42,10 @@ font_data = ExtResource( 4 )
 0/shape_one_way_margin = 0.0
 0/shapes = [  ]
 0/z_index = 0
+
+[sub_resource type="DynamicFont" id=8]
+size = 22
+font_data = ExtResource( 6 )
 
 [sub_resource type="DynamicFont" id=6]
 size = 26
@@ -145,13 +149,14 @@ tile_set = SubResource( 2 )
 cell_size = Vector2( 32, 32 )
 format = 1
 
-[node name="WindowDialog" type="WindowDialog" parent="Game"]
-visible = true
+[node name="CustomDialog" type="WindowDialog" parent="Game"]
 margin_right = 280.0
 margin_bottom = 220.0
+custom_fonts/title_font = SubResource( 8 )
+window_title = "自定义雷区"
 script = ExtResource( 7 )
 
-[node name="GridContainer" type="GridContainer" parent="Game/WindowDialog"]
+[node name="GridContainer" type="GridContainer" parent="Game/CustomDialog"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -162,14 +167,14 @@ margin_right = 129.0
 margin_bottom = 96.0
 columns = 3
 
-[node name="HeightLabel" type="Label" parent="Game/WindowDialog/GridContainer"]
+[node name="HeightLabel" type="Label" parent="Game/CustomDialog/GridContainer"]
 margin_top = 9.0
 margin_right = 78.0
 margin_bottom = 36.0
 custom_fonts/font = SubResource( 6 )
 text = "高度："
 
-[node name="HeightLineEdit" type="LineEdit" parent="Game/WindowDialog/GridContainer"]
+[node name="HeightLineEdit" type="LineEdit" parent="Game/CustomDialog/GridContainer"]
 margin_left = 86.0
 margin_right = 168.0
 margin_bottom = 45.0
@@ -178,21 +183,21 @@ size_flags_horizontal = 3
 custom_constants/minimum_spaces = 0
 max_length = 3
 
-[node name="NULL" type="Label" parent="Game/WindowDialog/GridContainer"]
+[node name="NULL" type="Label" parent="Game/CustomDialog/GridContainer"]
 margin_left = 176.0
 margin_top = 9.0
 margin_right = 258.0
 margin_bottom = 36.0
 custom_fonts/font = SubResource( 6 )
 
-[node name="WidthLabel" type="Label" parent="Game/WindowDialog/GridContainer"]
+[node name="WidthLabel" type="Label" parent="Game/CustomDialog/GridContainer"]
 margin_top = 62.0
 margin_right = 78.0
 margin_bottom = 89.0
 custom_fonts/font = SubResource( 6 )
 text = "宽度："
 
-[node name="WidthLineEdit" type="LineEdit" parent="Game/WindowDialog/GridContainer"]
+[node name="WidthLineEdit" type="LineEdit" parent="Game/CustomDialog/GridContainer"]
 margin_left = 86.0
 margin_top = 53.0
 margin_right = 168.0
@@ -202,21 +207,21 @@ size_flags_horizontal = 3
 custom_constants/minimum_spaces = 0
 max_length = 3
 
-[node name="NULL2" type="Label" parent="Game/WindowDialog/GridContainer"]
+[node name="NULL2" type="Label" parent="Game/CustomDialog/GridContainer"]
 margin_left = 176.0
 margin_top = 62.0
 margin_right = 258.0
 margin_bottom = 89.0
 custom_fonts/font = SubResource( 6 )
 
-[node name="MineLabel" type="Label" parent="Game/WindowDialog/GridContainer"]
+[node name="MineLabel" type="Label" parent="Game/CustomDialog/GridContainer"]
 margin_top = 115.0
 margin_right = 78.0
 margin_bottom = 142.0
 custom_fonts/font = SubResource( 6 )
 text = "雷数："
 
-[node name="MineLineEdit" type="LineEdit" parent="Game/WindowDialog/GridContainer"]
+[node name="MineLineEdit" type="LineEdit" parent="Game/CustomDialog/GridContainer"]
 margin_left = 86.0
 margin_top = 106.0
 margin_right = 168.0
@@ -226,32 +231,133 @@ size_flags_horizontal = 3
 custom_constants/minimum_spaces = 0
 max_length = 3
 
-[node name="NULL3" type="Label" parent="Game/WindowDialog/GridContainer"]
+[node name="NULL3" type="Label" parent="Game/CustomDialog/GridContainer"]
 margin_left = 176.0
 margin_top = 115.0
 margin_right = 258.0
 margin_bottom = 142.0
 custom_fonts/font = SubResource( 6 )
 
-[node name="NULL4" type="Label" parent="Game/WindowDialog/GridContainer"]
+[node name="NULL4" type="Label" parent="Game/CustomDialog/GridContainer"]
 margin_top = 162.0
 margin_right = 78.0
 margin_bottom = 189.0
 custom_fonts/font = SubResource( 6 )
 
-[node name="NULL5" type="Label" parent="Game/WindowDialog/GridContainer"]
+[node name="NULL5" type="Label" parent="Game/CustomDialog/GridContainer"]
 margin_left = 86.0
 margin_top = 162.0
 margin_right = 168.0
 margin_bottom = 189.0
 custom_fonts/font = SubResource( 6 )
 
-[node name="CustomConfirmButton" type="Button" parent="Game/WindowDialog/GridContainer"]
+[node name="CustomConfirmButton" type="Button" parent="Game/CustomDialog/GridContainer"]
 margin_left = 176.0
 margin_top = 159.0
 margin_right = 258.0
 margin_bottom = 192.0
 size_flags_horizontal = 3
+custom_fonts/font = SubResource( 7 )
+text = "确认"
+
+[node name="HighScoreDialog" type="WindowDialog" parent="Game"]
+margin_right = 280.0
+margin_bottom = 180.0
+custom_fonts/title_font = SubResource( 8 )
+window_title = "排行榜"
+script = ExtResource( 7 )
+
+[node name="GridContainer" type="GridContainer" parent="Game/HighScoreDialog"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -129.0
+margin_top = -69.0
+margin_right = 129.0
+margin_bottom = 69.0
+columns = 3
+
+[node name="LowLabel" type="Label" parent="Game/HighScoreDialog/GridContainer"]
+margin_right = 178.0
+margin_bottom = 27.0
+custom_fonts/font = SubResource( 6 )
+text = "初级："
+
+[node name="LowScoreLabel" type="Label" parent="Game/HighScoreDialog/GridContainer"]
+margin_left = 186.0
+margin_right = 250.0
+margin_bottom = 27.0
+custom_fonts/font = SubResource( 6 )
+
+[node name="NULL" type="Label" parent="Game/HighScoreDialog/GridContainer"]
+margin_left = 258.0
+margin_right = 258.0
+margin_bottom = 27.0
+custom_fonts/font = SubResource( 6 )
+
+[node name="MediumLabel" type="Label" parent="Game/HighScoreDialog/GridContainer"]
+margin_top = 35.0
+margin_right = 178.0
+margin_bottom = 62.0
+custom_fonts/font = SubResource( 6 )
+text = "中级："
+
+[node name="MediumScoreLabel" type="Label" parent="Game/HighScoreDialog/GridContainer"]
+margin_left = 186.0
+margin_top = 35.0
+margin_right = 250.0
+margin_bottom = 62.0
+custom_fonts/font = SubResource( 6 )
+
+[node name="NULL2" type="Label" parent="Game/HighScoreDialog/GridContainer"]
+margin_left = 258.0
+margin_top = 35.0
+margin_right = 258.0
+margin_bottom = 62.0
+custom_fonts/font = SubResource( 6 )
+
+[node name="HighLabel" type="Label" parent="Game/HighScoreDialog/GridContainer"]
+margin_top = 70.0
+margin_right = 178.0
+margin_bottom = 97.0
+custom_fonts/font = SubResource( 6 )
+text = "高级："
+
+[node name="HighScoreLabel" type="Label" parent="Game/HighScoreDialog/GridContainer"]
+margin_left = 186.0
+margin_top = 70.0
+margin_right = 250.0
+margin_bottom = 97.0
+custom_fonts/font = SubResource( 6 )
+
+[node name="NULL3" type="Label" parent="Game/HighScoreDialog/GridContainer"]
+margin_left = 258.0
+margin_top = 70.0
+margin_right = 258.0
+margin_bottom = 97.0
+custom_fonts/font = SubResource( 6 )
+
+[node name="ClearButton" type="Button" parent="Game/HighScoreDialog/GridContainer"]
+visible = false
+margin_top = 105.0
+margin_right = 78.0
+margin_bottom = 138.0
+custom_fonts/font = SubResource( 7 )
+text = "确认"
+
+[node name="NULL4" type="Label" parent="Game/HighScoreDialog/GridContainer"]
+margin_top = 108.0
+margin_right = 178.0
+margin_bottom = 135.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 6 )
+
+[node name="ConfirmButton" type="Button" parent="Game/HighScoreDialog/GridContainer"]
+margin_left = 186.0
+margin_top = 105.0
+margin_right = 250.0
+margin_bottom = 138.0
 custom_fonts/font = SubResource( 7 )
 text = "确认"
 
@@ -261,8 +367,10 @@ text = "确认"
 margin_right = 40.0
 margin_bottom = 40.0
 
-[connection signal="current_set" from="." to="Game/WindowDialog" method="_on_Main_current_set"]
+[connection signal="current_set" from="." to="Game/CustomDialog" method="_on_Main_current_set"]
 [connection signal="modal_closed" from="Game/GUI/MenuButton" to="." method="_on_MenuButton_modal_closed"]
 [connection signal="pressed" from="Game/GUI/MenuButton" to="." method="_on_MenuButton_pressed"]
 [connection signal="pressed" from="Game/GUI/MarginContainer/HBoxContainer/CenterContainer/resetButton" to="." method="_on_resetButton_pressed"]
+[connection signal="pressed" from="Game/CustomDialog/GridContainer/CustomConfirmButton" to="." method="_on_CustomConfirmButton_pressed"]
+[connection signal="pressed" from="Game/HighScoreDialog/GridContainer/ConfirmButton" to="." method="_on_ConfirmButton_pressed"]
 [connection signal="timeout" from="Tick" to="." method="_on_Tick_timeout"]

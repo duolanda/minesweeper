@@ -48,7 +48,8 @@ onready var tilemap:TileMap = $Game/TileMap;
 onready var tick:Timer = $Tick;
 onready var resetBtn:TextureButton = $Game/GUI/MarginContainer/HBoxContainer/CenterContainer/resetButton;
 onready var menuButton:MenuButton = $Game/GUI/MenuButton;
-onready var customDialog:WindowDialog = $Game/WindowDialog;
+onready var customDialog:WindowDialog = $Game/CustomDialog;
+onready var highScoreDialog:WindowDialog = $Game/HighScoreDialog;
 
 signal current_set(width, height, mine);
 
@@ -72,24 +73,36 @@ var isWinOrOver:bool = false;
 var anime_queue:Array = [];
 #是否第一次点击
 var isFirst:bool = true;
+# 存储相关
+var savegame:File = File.new();
+var save_path:String = "user://minesweeper_highscore.save" ;
+var save_data:Dictionary = {"low": 999, "medium":999, "high":999, "set":[30,16,99]};
 
 func _ready() -> void:
+	if not savegame.file_exists(save_path):
+		create_save();
+	save_data = read_savegame()
+	gridWidth = save_data["set"][0];
+	gridHeight = save_data["set"][1];
+	totalMineCount = save_data["set"][2];
+	
 	init_map();
 	init_game();
 	draw_tiles();
+	init_highscore();
 
 func _input(event:InputEvent) -> void:
-	if menuButton.get_popup().visible or customDialog.visible:
+	if menuButton.get_popup().visible or customDialog.visible or highScoreDialog.visible or isWinOrOver:
 		return
 		
-	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT and not isWinOrOver:
+	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
 		resetBtn.texture_normal = clicked_normal;
 		click_cell_ani(event.position);	
 		if event.shift:
 			mouse_right_click(event.position);
 			
 			
-	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_LEFT and not isWinOrOver:
+	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_LEFT:
 		resetBtn.texture_normal = reset_normal;
 		if event.shift:
 			for t in anime_queue:
@@ -97,17 +110,13 @@ func _input(event:InputEvent) -> void:
 		else:
 			mouse_left_click(event.position);
 			
-	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT and not isWinOrOver:
+	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT:
 		mouse_right_click(event.position);
 		
-	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_RIGHT and not isWinOrOver:
+	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_RIGHT:
 		resetBtn.texture_normal = reset_normal;
 		for t in anime_queue:
 			draw_single_tile(t);
-	
-#	if event is InputEventKey and event.pressed and event.scancode == KEY_SHIFT and not isWinOrOver:
-#		if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_LEFT and not isWinOrOver:
-#			mouse_right_click(event.position);
 
 func init_map():
 	var width:int = LEFT_MARGIN + gridWidth * TILE_SIZE + RIGHT_MARGIN;
@@ -131,10 +140,7 @@ func init_game():
 	#弹出菜单
 	var popup = menuButton.get_popup();
 	popup.connect("id_pressed", self, "game_menu");
-	var confirm_button = customDialog.get_node("GridContainer/CustomConfirmButton");
-	confirm_button.connect("pressed", self, "custom_confirm")
 	
-#	tilemap.set_cell_size(Vector2(gridWidth, gridHeight));
 	for i in totalCount:
 		if tempMineCount >  0:
 			totals.append("mine");
@@ -193,9 +199,6 @@ func mouse_left_click(mouse_position:Vector2):
 				if not totalsTiles[i].isMine:
 					totalsTiles[index].isMine = false;
 					totalsTiles[i].isMine = true;
-					#不然位置会跳
-#					totalsTiles[index].position = totalsTiles[i].position;
-#					totalsTiles[i].position = temp.position;
 					break;
 			for t in totalsTiles:
 				if t.isMine == false:
@@ -348,6 +351,7 @@ func check_win():
 			resetBtn.texture_normal = happy_normal;
 			resetBtn.texture_hover = happy_normal;
 			resetBtn.texture_pressed = happy_pressed;
+			save(time);
 
 #失败
 func game_over(tile:TileData, mouse_pos:int=0):
@@ -402,6 +406,12 @@ func init_custom_game(width:int=9, height:int=9 , mine:int=10):
 	gridHeight = height;
 	totalMineCount = mine;
 	
+	save_data["set"][0] = gridWidth;
+	save_data["set"][1] = gridHeight;
+	save_data["set"][2] = totalMineCount;
+	
+	save();
+	
 	tilemap.clear();
 	init_map();
 	reset();
@@ -415,6 +425,7 @@ func reset():
 	isFirst = true;
 	init_game();
 	draw_tiles();
+	init_highscore();
 		
 func set_cell(x:int, y:int, style:Vector2):
 	tilemap.set_cell(x, y, 0, false, false, false, style);
@@ -432,10 +443,68 @@ func game_menu(id):
 			emit_signal("current_set", gridWidth, gridHeight, totalMineCount)
 			customDialog.popup();
 		4:
-			print("记录");
+			highScoreDialog.popup();
+
+
+#左键开格，格子动画
+func click_cell_ani(mouse_position:Vector2):
+	var local_position:Vector2 = tilemap.to_local(mouse_position);
+	var map_position:Vector2 = tilemap.world_to_map(local_position);
+	if map_position.x < 0 or map_position.x >= gridWidth or map_position.y < 0 or map_position.y >= gridHeight:
+		return;
+	var index:int = map_position.y * gridWidth + map_position.x;
+	var tile:TileData = totalsTiles[index];
+	if not tile.flaged and not tile.opened:
+		set_cell(tile.position.x, tile.position.y, NUM0_POSITION);
+
+#高分榜窗口内容
+func init_highscore():
+	highScoreDialog.get_node("GridContainer/LowScoreLabel").text = str(save_data["low"])+"秒";
+	highScoreDialog.get_node("GridContainer/MediumScoreLabel").text = str(save_data["medium"])+"秒";
+	highScoreDialog.get_node("GridContainer/HighScoreLabel").text = str(save_data["high"])+"秒";
+	
+#保存游戏相关功能
+func create_save():
+	savegame.open(save_path, File.WRITE);
+	savegame.store_var(save_data);
+	savegame.close();
+
+func save(high_score=null):
+	# 有高分再做排行榜存储，没有高分只存储当前状态
+	if high_score != null:
+		if gridWidth==9 and gridHeight==9 and totalMineCount==10:
+			if high_score < save_data['low']:
+				save_data['low'] = high_score;
+		elif gridWidth==16 and gridHeight==16 and totalMineCount==40:
+			if high_score < save_data['medium']:
+				save_data['medium'] = high_score;
+		elif gridWidth==30 and gridHeight==16 and totalMineCount==99:
+			if high_score < save_data['high']:
+				save_data['high'] = high_score;
+
+	savegame.open(save_path, File.WRITE);
+	savegame.store_var(save_data);
+	savegame.close();
+
+func read_savegame() -> Dictionary:
+	savegame.open(save_path, File.READ);
+	save_data = savegame.get_var();
+	savegame.close();
+	return save_data;
+
+#计时器
+func _on_Tick_timeout() -> void:
+	time += 1;
+	if time>999:
+		time =999;
+	timeLabel.text = "%03d" % time;
+
+#重置游戏
+func _on_resetButton_pressed() -> void:
+	reset();
 
 #确定自定义游戏信息
-func custom_confirm():
+func _on_CustomConfirmButton_pressed():
 	var custom_width := int(customDialog.get_node("GridContainer/WidthLineEdit").text)
 	var custom_height := int(customDialog.get_node("GridContainer/HeightLineEdit").text)
 	var custom_mine := int(customDialog.get_node("GridContainer/MineLineEdit").text)
@@ -450,30 +519,6 @@ func custom_confirm():
 	init_custom_game(custom_width, custom_height, custom_mine);
 	customDialog.hide();
 
-#左键开格，格子动画
-func click_cell_ani(mouse_position:Vector2):
-	var local_position:Vector2 = tilemap.to_local(mouse_position);
-	var map_position:Vector2 = tilemap.world_to_map(local_position);
-	if map_position.x < 0 or map_position.x >= gridWidth or map_position.y < 0 or map_position.y >= gridHeight:
-		return;
-	var index:int = map_position.y * gridWidth + map_position.x;
-	var tile:TileData = totalsTiles[index];
-	if not tile.flaged:
-		set_cell(tile.position.x, tile.position.y, NUM0_POSITION);
-
-#计时器
-func _on_Tick_timeout() -> void:
-	time += 1;
-	timeLabel.text = "%03d" % time;
-	
-
-
-func _on_resetButton_pressed() -> void:
-	reset();
-
-
-func _on_MenuButton_pressed():
-#	get_tree().paused = true
-	pass
-
-
+# 确定高分榜
+func _on_ConfirmButton_pressed():
+	highScoreDialog.hide();
