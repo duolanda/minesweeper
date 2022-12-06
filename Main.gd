@@ -6,6 +6,7 @@ var gameover_normal = preload("res://assets/images/gameover_normal.png");
 var gameover_pressed = preload("res://assets/images/gameover_pressed.png");
 var happy_normal = preload("res://assets/images/happy_normal.png");
 var happy_pressed = preload("res://assets/images/happy_pressed.png")
+var clicked_normal = preload("res://assets/images/clicked_normal.png")
 
 #查找规则（统计格子周围哪几个格子有雷）
 const RULE:Array = [Vector2(-1,-1),Vector2(-1,0),Vector2(-1,1),Vector2(0,-1),Vector2(0,1),Vector2(1,-1),Vector2(1,0),Vector2(1,1)];
@@ -27,7 +28,7 @@ const NUM4_POSITION:Vector2 = Vector2(4,0);
 const NUM5_POSITION:Vector2 = Vector2(5,0); 
 const NUM6_POSITION:Vector2 = Vector2(6,0); 
 const NUM7_POSITION:Vector2 = Vector2(0,1); 
-const NUM8_POSITION:Vector2 = Vector2(0,2); 
+const NUM8_POSITION:Vector2 = Vector2(1,1); 
 #默认显示
 const NORMAL_POSITION:Vector2 = Vector2(2,1);
 #旗子
@@ -47,6 +48,9 @@ onready var tilemap:TileMap = $Game/TileMap;
 onready var tick:Timer = $Tick;
 onready var resetBtn:TextureButton = $Game/GUI/MarginContainer/HBoxContainer/CenterContainer/resetButton;
 onready var menuButton:MenuButton = $Game/GUI/MenuButton;
+onready var customDialog:WindowDialog = $Game/WindowDialog;
+
+signal current_set(width, height, mine);
 
 #格子的横向数量
 var gridWidth:int = 30;
@@ -75,20 +79,29 @@ func _ready() -> void:
 	draw_tiles();
 
 func _input(event:InputEvent) -> void:
+	if menuButton.get_popup().visible or customDialog.visible:
+		return
+		
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT and not isWinOrOver:
+		resetBtn.texture_normal = clicked_normal;
+		click_cell_ani(event.position);	
 		if event.shift:
 			mouse_right_click(event.position);
 			
+			
 	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_LEFT and not isWinOrOver:
+		resetBtn.texture_normal = reset_normal;
 		if event.shift:
 			for t in anime_queue:
 				draw_single_tile(t);
 		else:
 			mouse_left_click(event.position);
+			
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT and not isWinOrOver:
 		mouse_right_click(event.position);
 		
 	if event is InputEventMouseButton and not event.pressed and event.button_index == BUTTON_RIGHT and not isWinOrOver:
+		resetBtn.texture_normal = reset_normal;
 		for t in anime_queue:
 			draw_single_tile(t);
 	
@@ -118,6 +131,8 @@ func init_game():
 	#弹出菜单
 	var popup = menuButton.get_popup();
 	popup.connect("id_pressed", self, "game_menu");
+	var confirm_button = customDialog.get_node("GridContainer/CustomConfirmButton");
+	confirm_button.connect("pressed", self, "custom_confirm")
 	
 #	tilemap.set_cell_size(Vector2(gridWidth, gridHeight));
 	for i in totalCount:
@@ -167,7 +182,7 @@ func mouse_left_click(mouse_position:Vector2):
 	var tile:TileData = totalsTiles[index];
 	if tile.flaged:
 			return
-	
+
 	if tick.is_stopped():
 		tick.start();
 		
@@ -238,6 +253,7 @@ func mouse_right_click(mouse_position:Vector2):
 		draw_single_tile(tile);
 	else: 
 		#鼠标中键功能
+		resetBtn.texture_normal = clicked_normal;
 		var flagedCount:int = get_flaged_count(map_position);
 		if tile.aroundMine == flagedCount: 
 			search_queue = search_around(map_position, true);
@@ -413,9 +429,37 @@ func game_menu(id):
 		2:
 			init_custom_game(30,16,99);
 		3:
-			print("自定义");
+			emit_signal("current_set", gridWidth, gridHeight, totalMineCount)
+			customDialog.popup();
 		4:
 			print("记录");
+
+#确定自定义游戏信息
+func custom_confirm():
+	var custom_width := int(customDialog.get_node("GridContainer/WidthLineEdit").text)
+	var custom_height := int(customDialog.get_node("GridContainer/HeightLineEdit").text)
+	var custom_mine := int(customDialog.get_node("GridContainer/MineLineEdit").text)
+	
+	custom_width = clamp(custom_width, 9, 100);
+	custom_height = clamp(custom_height, 9, 100);
+	custom_mine = clamp(custom_mine, 10, 999);
+	
+	if custom_mine > custom_width*custom_height*0.9:
+		custom_mine = int(custom_width*custom_height*0.9)
+	
+	init_custom_game(custom_width, custom_height, custom_mine);
+	customDialog.hide();
+
+#左键开格，格子动画
+func click_cell_ani(mouse_position:Vector2):
+	var local_position:Vector2 = tilemap.to_local(mouse_position);
+	var map_position:Vector2 = tilemap.world_to_map(local_position);
+	if map_position.x < 0 or map_position.x >= gridWidth or map_position.y < 0 or map_position.y >= gridHeight:
+		return;
+	var index:int = map_position.y * gridWidth + map_position.x;
+	var tile:TileData = totalsTiles[index];
+	if not tile.flaged:
+		set_cell(tile.position.x, tile.position.y, NUM0_POSITION);
 
 #计时器
 func _on_Tick_timeout() -> void:
@@ -428,6 +472,8 @@ func _on_resetButton_pressed() -> void:
 	reset();
 
 
-#func _on_MenuButton_pressed():
+func _on_MenuButton_pressed():
 #	get_tree().paused = true
+	pass
+
 
