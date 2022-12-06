@@ -50,6 +50,7 @@ onready var resetBtn:TextureButton = $Game/GUI/MarginContainer/HBoxContainer/Cen
 onready var menuButton:MenuButton = $Game/GUI/MenuButton;
 onready var customDialog:WindowDialog = $Game/CustomDialog;
 onready var highScoreDialog:WindowDialog = $Game/HighScoreDialog;
+onready var CongratulateDialog:AcceptDialog = $Game/CongratulateDialog;
 
 signal current_set(width, height, mine);
 
@@ -425,7 +426,6 @@ func reset():
 	isFirst = true;
 	init_game();
 	draw_tiles();
-	init_highscore();
 		
 func set_cell(x:int, y:int, style:Vector2):
 	tilemap.set_cell(x, y, 0, false, false, false, style);
@@ -459,9 +459,9 @@ func click_cell_ani(mouse_position:Vector2):
 
 #高分榜窗口内容
 func init_highscore():
-	highScoreDialog.get_node("GridContainer/LowScoreLabel").text = str(save_data["low"])+"秒";
-	highScoreDialog.get_node("GridContainer/MediumScoreLabel").text = str(save_data["medium"])+"秒";
-	highScoreDialog.get_node("GridContainer/HighScoreLabel").text = str(save_data["high"])+"秒";
+	highScoreDialog.get_node("VBoxContainer/HBoxContainer/LowScoreLabel").text = str(save_data["low"])+"秒";
+	highScoreDialog.get_node("VBoxContainer/HBoxContainer2/MediumScoreLabel").text = str(save_data["medium"])+"秒";
+	highScoreDialog.get_node("VBoxContainer/HBoxContainer3/HighScoreLabel").text = str(save_data["high"])+"秒";
 	
 #保存游戏相关功能
 func create_save():
@@ -475,12 +475,19 @@ func save(high_score=null):
 		if gridWidth==9 and gridHeight==9 and totalMineCount==10:
 			if high_score < save_data['low']:
 				save_data['low'] = high_score;
+				CongratulateDialog.dialog_text = "初级难度破纪录啦！";
+				CongratulateDialog.popup_centered();
 		elif gridWidth==16 and gridHeight==16 and totalMineCount==40:
 			if high_score < save_data['medium']:
 				save_data['medium'] = high_score;
+				CongratulateDialog.dialog_text = "中级难度破纪录啦！";
+				CongratulateDialog.popup_centered();
 		elif gridWidth==30 and gridHeight==16 and totalMineCount==99:
 			if high_score < save_data['high']:
 				save_data['high'] = high_score;
+				CongratulateDialog.dialog_text = "高级难度破纪录啦！";
+				CongratulateDialog.popup_centered();
+		init_highscore();
 
 	savegame.open(save_path, File.WRITE);
 	savegame.store_var(save_data);
@@ -519,6 +526,14 @@ func _on_CustomConfirmButton_pressed():
 	init_custom_game(custom_width, custom_height, custom_mine);
 	customDialog.hide();
 
-# 确定高分榜
+#确定高分榜
 func _on_ConfirmButton_pressed():
 	highScoreDialog.hide();
+
+#清空高分榜
+func _on_ClearButton_pressed():
+	save_data['low'] = 999;
+	save_data['medium'] = 999;
+	save_data['high'] = 999;
+	save();
+	init_highscore();
