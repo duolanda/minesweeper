@@ -124,11 +124,16 @@ func init_map():
 	var height:int = TOP_MARGIN + gridHeight * TILE_SIZE + BOTTOM_MARGIN;
 	bg.rect_size = Vector2(width, height);
 	
+	gui.rect_size.x = width;
+		
+	if gridWidth > 55 or gridHeight> 25:
+		get_tree().set_screen_stretch(0,4,Vector2(300,300),.5);
+		width/=2
+		height/=2
+		
 	OS.set_window_size(Vector2(width, height))
 
-#	var windowSize:Vector2 = OS.window_size;
-#	game.position = Vector2((windowSize.x-width)/2, (windowSize.y-height)/2)
-	gui.rect_size.x = width;
+
 
 func init_game():
 	#全部的数据数量
@@ -525,6 +530,7 @@ func _on_CustomConfirmButton_pressed():
 	
 	init_custom_game(custom_width, custom_height, custom_mine);
 	customDialog.hide();
+	
 
 #确定高分榜
 func _on_ConfirmButton_pressed():
