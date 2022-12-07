@@ -142,6 +142,9 @@ func init_game():
 			tile.aroundMine = get_mine_count(tile.position);
 			
 	remainMine = totalMineCount;
+	remainLabel.text = "%02d" % remainMine;
+	redLabel.text = "%02d" % redFlag;
+	blueLabel.text = "%02d" % blueFlag;
 
 func mouse_left_click(mouse_position:Vector2):
 	var local_position:Vector2 = tilemap.to_local(mouse_position);
@@ -320,4 +323,4 @@ func game_menu(id):
 		0:
 			reset();
 		1:
-			pass;
+			get_tree().change_scene("res://Main.tscn");

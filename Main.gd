@@ -449,6 +449,8 @@ func game_menu(id):
 			customDialog.popup();
 		4:
 			highScoreDialog.popup();
+		5:
+			get_tree().change_scene("res://2PMode.tscn");
 
 
 #左键开格，格子动画

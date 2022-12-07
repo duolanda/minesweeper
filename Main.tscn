@@ -92,7 +92,7 @@ custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_colors/font_color_hover = Color( 0.32, 0.32, 0.32, 1 )
 custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
 text = "菜单"
-items = [ "初级", null, 0, false, false, 0, 0, null, "", false, "中级", null, 0, false, false, 1, 0, null, "", false, "高级", null, 0, false, false, 2, 0, null, "", false, "自定义", null, 0, false, false, 3, 0, null, "", false, "排行榜", null, 0, false, false, 4, 0, null, "", false ]
+items = [ "初级", null, 0, false, false, 0, 0, null, "", false, "中级", null, 0, false, false, 1, 0, null, "", false, "高级", null, 0, false, false, 2, 0, null, "", false, "自定义", null, 0, false, false, 3, 0, null, "", false, "排行榜", null, 0, false, false, 4, 0, null, "", false, "双人扫雷", null, 0, false, false, 5, 0, null, "", false ]
 
 [node name="MarginContainer" type="MarginContainer" parent="Game/GUI"]
 anchor_right = 1.0
