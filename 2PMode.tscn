@@ -1,0 +1,169 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://2PMode.gd" type="Script" id=1]
+[ext_resource path="res://assets/images/MS_BG_EDIT.png" type="Texture" id=2]
+[ext_resource path="res://assets/fonts/FX-LED.TTF" type="DynamicFontData" id=3]
+[ext_resource path="res://assets/images/minesweeperTile_2P.png" type="Texture" id=4]
+[ext_resource path="res://assets/fonts/simhei.ttf" type="DynamicFontData" id=5]
+
+[sub_resource type="DynamicFont" id=4]
+size = 160
+use_filter = true
+font_data = ExtResource( 5 )
+
+[sub_resource type="Theme" id=10]
+default_font = SubResource( 4 )
+
+[sub_resource type="DynamicFont" id=11]
+size = 24
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=12]
+size = 24
+font_data = ExtResource( 3 )
+
+[sub_resource type="TileSet" id=15]
+0/name = "minesweeperTile_2P.png 0"
+0/texture = ExtResource( 4 )
+0/tex_offset = Vector2( 0, 0 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 0, 0, 224, 96 )
+0/tile_mode = 2
+0/autotile/icon_coordinate = Vector2( 0, 0 )
+0/autotile/tile_size = Vector2( 32, 32 )
+0/autotile/spacing = 0
+0/autotile/occluder_map = [  ]
+0/autotile/navpoly_map = [  ]
+0/autotile/priority_map = [  ]
+0/autotile/z_index_map = [  ]
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
+0/shape_offset = Vector2( 0, 0 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+0/shape_one_way = false
+0/shape_one_way_margin = 0.0
+0/shapes = [  ]
+0/z_index = 0
+
+[sub_resource type="DynamicFont" id=9]
+size = 22
+font_data = ExtResource( 5 )
+
+[sub_resource type="Theme" id=14]
+default_font = SubResource( 9 )
+
+[node name="2PMode" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Game" type="Node2D" parent="."]
+
+[node name="BG" type="NinePatchRect" parent="Game"]
+margin_right = 167.0
+margin_bottom = 191.0
+texture = ExtResource( 2 )
+patch_margin_left = 12
+patch_margin_top = 72
+patch_margin_right = 12
+patch_margin_bottom = 12
+
+[node name="GUI" type="Control" parent="Game"]
+
+[node name="MenuButton" type="MenuButton" parent="Game/GUI"]
+margin_left = 10.0
+margin_top = 5.0
+margin_right = 342.0
+margin_bottom = 172.0
+rect_scale = Vector2( 0.1, 0.1 )
+focus_mode = 2
+theme = SubResource( 10 )
+custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
+custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0.32, 0.32, 0.32, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "菜单"
+items = [ "重新开始", null, 0, false, false, 0, 0, null, "", false, "回到单人模式", null, 0, false, false, 1, 0, null, "", false ]
+
+[node name="MarginContainer" type="MarginContainer" parent="Game/GUI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 14.0
+margin_top = 34.0
+margin_right = -13.0
+margin_bottom = 58.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Game/GUI/MarginContainer"]
+margin_right = 139.0
+margin_bottom = 24.0
+
+[node name="redBG" type="ColorRect" parent="Game/GUI/MarginContainer/HBoxContainer"]
+margin_right = 39.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 39, 23 )
+color = Color( 0, 0, 0, 1 )
+
+[node name="redLabel" type="Label" parent="Game/GUI/MarginContainer/HBoxContainer/redBG"]
+margin_right = 40.0
+margin_bottom = 25.0
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+custom_fonts/font = SubResource( 11 )
+text = "00"
+align = 1
+valign = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="Game/GUI/MarginContainer/HBoxContainer"]
+margin_left = 47.0
+margin_right = 92.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 45, 24 )
+size_flags_horizontal = 3
+
+[node name="remainBG" type="ColorRect" parent="Game/GUI/MarginContainer/HBoxContainer/CenterContainer"]
+margin_left = 3.0
+margin_right = 42.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 39, 24 )
+color = Color( 0, 0, 0, 1 )
+
+[node name="remainLabel" type="Label" parent="Game/GUI/MarginContainer/HBoxContainer/CenterContainer/remainBG"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -12.0
+margin_top = -12.5
+margin_right = 12.0
+margin_bottom = 12.5
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 12 )
+text = "51"
+align = 1
+valign = 1
+
+[node name="blueBG" type="ColorRect" parent="Game/GUI/MarginContainer/HBoxContainer"]
+margin_left = 100.0
+margin_right = 139.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 39, 23 )
+color = Color( 0, 0, 0, 1 )
+
+[node name="blueLabel" type="Label" parent="Game/GUI/MarginContainer/HBoxContainer/blueBG"]
+margin_right = 40.0
+margin_bottom = 25.0
+custom_colors/font_color = Color( 0, 0.670588, 1, 1 )
+custom_fonts/font = SubResource( 11 )
+text = "00"
+align = 1
+valign = 1
+
+[node name="TileMap" type="TileMap" parent="Game"]
+position = Vector2( 11, 71 )
+tile_set = SubResource( 15 )
+cell_size = Vector2( 32, 32 )
+format = 1
+
+[node name="CongratulateDialog" type="AcceptDialog" parent="Game"]
+margin_right = 162.0
+margin_bottom = 110.0
+theme = SubResource( 14 )
+window_title = "恭喜！"

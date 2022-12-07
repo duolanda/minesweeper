@@ -284,7 +284,7 @@ func get_flaged_count(tile_pos:Vector2) -> int:
 		var search_offset_int = r.y * gridWidth + r.x; 
 		#当前格子在数组里的位置
 		var currentIndex:int = tile_pos.y * gridWidth +tile_pos.x;
-		#目标个字位置
+		#目标格子位置
 		var searchIndex:int = currentIndex + search_offset_int;
 		var searchTile:TileData = totalsTiles[searchIndex];
 		
@@ -303,7 +303,7 @@ func search_around(tile_pos:Vector2, has_mine:bool = false) -> Array:
 		var search_offset_int = r.y * gridWidth + r.x; 
 		#当前格子在数组里的位置
 		var currentIndex:int = tile_pos.y * gridWidth +tile_pos.x;
-		#目标个字位置
+		#目标格子位置
 		var searchIndex:int = currentIndex + search_offset_int;
 		var searchTile:TileData = totalsTiles[searchIndex];
 		if not searchTile.opened and not searchTile.flaged:

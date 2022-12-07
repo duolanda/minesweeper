@@ -8,13 +8,13 @@
 [ext_resource path="res://assets/fonts/simhei.ttf" type="DynamicFontData" id=6]
 [ext_resource path="res://WindowDialog.gd" type="Script" id=7]
 
-[sub_resource type="DynamicFont" id=4]
+[sub_resource type="DynamicFont" id=11]
 size = 160
 use_filter = true
 font_data = ExtResource( 6 )
 
 [sub_resource type="Theme" id=5]
-default_font = SubResource( 4 )
+default_font = SubResource( 11 )
 
 [sub_resource type="DynamicFont" id=1]
 size = 24
@@ -56,12 +56,12 @@ font_data = ExtResource( 6 )
 size = 20
 font_data = ExtResource( 6 )
 
-[sub_resource type="DynamicFont" id=9]
+[sub_resource type="DynamicFont" id=12]
 size = 22
 font_data = ExtResource( 6 )
 
 [sub_resource type="Theme" id=10]
-default_font = SubResource( 9 )
+default_font = SubResource( 12 )
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 2 )
@@ -363,13 +363,7 @@ window_title = "恭喜！"
 
 [node name="Tick" type="Timer" parent="."]
 
-[node name="Popup" type="Popup" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
-
 [connection signal="current_set" from="." to="Game/CustomDialog" method="_on_Main_current_set"]
-[connection signal="modal_closed" from="Game/GUI/MenuButton" to="." method="_on_MenuButton_modal_closed"]
-[connection signal="pressed" from="Game/GUI/MenuButton" to="." method="_on_MenuButton_pressed"]
 [connection signal="pressed" from="Game/GUI/MarginContainer/HBoxContainer/CenterContainer/resetButton" to="." method="_on_resetButton_pressed"]
 [connection signal="pressed" from="Game/CustomDialog/GridContainer/CustomConfirmButton" to="." method="_on_CustomConfirmButton_pressed"]
 [connection signal="pressed" from="Game/HighScoreDialog/VBoxContainer/HBoxContainer4/ClearButton" to="." method="_on_ClearButton_pressed"]
