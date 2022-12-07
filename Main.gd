@@ -7,6 +7,7 @@ var gameover_pressed = preload("res://assets/images/gameover_pressed.png");
 var happy_normal = preload("res://assets/images/happy_normal.png");
 var happy_pressed = preload("res://assets/images/happy_pressed.png")
 var clicked_normal = preload("res://assets/images/clicked_normal.png")
+var love_normal = preload("res://assets/images/love_normal.png")
 
 #查找规则（统计格子周围哪几个格子有雷）
 const RULE:Array = [Vector2(-1,-1),Vector2(-1,0),Vector2(-1,1),Vector2(0,-1),Vector2(0,1),Vector2(1,-1),Vector2(1,0),Vector2(1,1)];
@@ -509,6 +510,8 @@ func read_savegame() -> Dictionary:
 #计时器
 func _on_Tick_timeout() -> void:
 	time += 1;
+	if remainMine == 12 and time == 10:
+		resetBtn.texture_normal = love_normal;
 	if time>999:
 		time =999;
 	timeLabel.text = "%03d" % time;
