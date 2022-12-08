@@ -20,10 +20,12 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Minesweeper"
+config/name="双人扫雷"
 run/main_scene="res://Main.tscn"
 boot_splash/show_image=false
 config/icon="res://icon.png"
+config/macos_native_icon="res://assets/icon.icns"
+config/windows_native_icon="res://assets/icon.ico"
 
 [display]
 

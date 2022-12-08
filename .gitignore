@@ -11,3 +11,5 @@ export_presets.cfg
 data_*/
 .DS_Store
 assets/.DS_Store
+assets/icon.icns
+assets/icon.ico

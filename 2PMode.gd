@@ -321,6 +321,8 @@ func reset():
 	isWin = false;
 	redFlag = 0;
 	blueFlag = 0;
+	redPlay.hide()
+	bluePlay.hide()
 	
 	init_game();
 	draw_tiles();
