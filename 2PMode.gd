@@ -46,6 +46,8 @@ onready var game:Node2D = $Game;
 onready var gui:Control = $Game/GUI;
 onready var redLabel:Label = $Game/GUI/MarginContainer/HBoxContainer/redBG/redLabel;
 onready var blueLabel:Label = $Game/GUI/MarginContainer/HBoxContainer/blueBG/blueLabel;
+onready var redPlay:ColorRect = $Game/GUI/MarginContainer/HBoxContainer/redBG/redPlay;
+onready var bluePlay:ColorRect = $Game/GUI/MarginContainer/HBoxContainer/blueBG/bluePlay;
 onready var remainLabel:Label = $Game/GUI/MarginContainer/HBoxContainer/CenterContainer/remainBG/remainLabel;
 onready var tilemap:TileMap = $Game/TileMap;
 onready var menuButton:MenuButton = $Game/GUI/MenuButton;
@@ -145,6 +147,7 @@ func init_game():
 	remainLabel.text = "%02d" % remainMine;
 	redLabel.text = "%02d" % redFlag;
 	blueLabel.text = "%02d" % blueFlag;
+	redPlay.show();
 
 func mouse_left_click(mouse_position:Vector2):
 	var local_position:Vector2 = tilemap.to_local(mouse_position);
@@ -179,6 +182,12 @@ func mouse_left_click(mouse_position:Vector2):
 					check_tile(search_queue.pop_front());	
 			# 没点到雷就变换颜色
 			flag_color = -flag_color;
+			if redPlay.visible:
+				redPlay.hide()
+				bluePlay.show()
+			else:
+				bluePlay.hide()
+				redPlay.show()
 
 
 func check_tile(tile:TileData):
@@ -274,12 +283,14 @@ func check_win():
 	if redFlag == 26:
 		isWin = true;
 		CongratulateDialog.dialog_text = "红方胜利！"
-		CongratulateDialog.popup_centered();
+		CongratulateDialog.rect_position = get_viewport_rect().size/2-Vector2(81,53)-Vector2(34,0);
+		CongratulateDialog.show(); 
 		
 	if blueFlag == 26:
 		isWin = true;
 		CongratulateDialog.dialog_text = "蓝方胜利！"
-		CongratulateDialog.popup_centered();
+		CongratulateDialog.rect_position = get_viewport_rect().size/2-Vector2(81,53)-Vector2(34,0);
+		CongratulateDialog.show(); 
 		
 
 #获取周围的雷的数量

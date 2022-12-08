@@ -75,6 +75,8 @@ var isWinOrOver:bool = false;
 var anime_queue:Array = [];
 #是否第一次点击
 var isFirst:bool = true;
+#左键单击时的格子，记录发生左键点击动画的格子
+var click_cell:TileData;
 # 存储相关
 var savegame:File = File.new();
 var save_path:String = "user://minesweeper_highscore.save" ;
@@ -92,6 +94,8 @@ func _ready() -> void:
 	init_game();
 	draw_tiles();
 	init_highscore();
+
+
 
 func _input(event:InputEvent) -> void:
 	if menuButton.get_popup().visible or customDialog.visible or highScoreDialog.visible or isWinOrOver:
@@ -141,8 +145,9 @@ func init_game():
 	var totalCount:int = gridWidth*gridHeight;
 	var tempMineCount:int = totalMineCount;
 	var totals:Array = [];
-	search_queue = []
-	anime_queue = []
+	search_queue = [];
+	anime_queue = [];
+	click_cell = null;
 	
 	#弹出菜单
 	var popup = menuButton.get_popup();
@@ -184,6 +189,7 @@ func init_game():
 	mineLabel.text = "%03d" % remainMine;
 	time = 0
 	timeLabel.text = "%03d" % time;
+	
 
 func mouse_left_click(mouse_position:Vector2):
 	var local_position:Vector2 = tilemap.to_local(mouse_position);
@@ -198,7 +204,14 @@ func mouse_left_click(mouse_position:Vector2):
 
 	if tick.is_stopped():
 		tick.start();
-		
+	
+	#如果玩家一开始按住左键但是在另外的格子松开了
+	if tile != click_cell:
+		if not click_cell.opened:
+			set_cell(click_cell.position.x, click_cell.position.y, NORMAL_POSITION);
+		else:
+			draw_single_tile(click_cell)
+	
 	if isFirst: #如果第一次点到雷
 		isFirst = false;
 		if tile.isMine:
@@ -463,6 +476,7 @@ func click_cell_ani(mouse_position:Vector2):
 	var index:int = map_position.y * gridWidth + map_position.x;
 	var tile:TileData = totalsTiles[index];
 	if not tile.flaged and not tile.opened:
+		click_cell = tile;
 		set_cell(tile.position.x, tile.position.y, NUM0_POSITION);
 
 #高分榜窗口内容
@@ -484,17 +498,20 @@ func save(high_score=null):
 			if high_score < save_data['low']:
 				save_data['low'] = high_score;
 				CongratulateDialog.dialog_text = "初级难度破纪录啦！";
-				CongratulateDialog.popup_centered();
+				CongratulateDialog.rect_position = get_viewport_rect().size/2-Vector2(81,53)-Vector2(34,0);
+				CongratulateDialog.show(); #不能用 popup_centered 鼠标点别处窗口会消失
 		elif gridWidth==16 and gridHeight==16 and totalMineCount==40:
 			if high_score < save_data['medium']:
 				save_data['medium'] = high_score;
 				CongratulateDialog.dialog_text = "中级难度破纪录啦！";
-				CongratulateDialog.popup_centered();
+				CongratulateDialog.rect_position = get_viewport_rect().size/2-Vector2(81,53)-Vector2(34,0);
+				CongratulateDialog.show(); 
 		elif gridWidth==30 and gridHeight==16 and totalMineCount==99:
 			if high_score < save_data['high']:
 				save_data['high'] = high_score;
 				CongratulateDialog.dialog_text = "高级难度破纪录啦！";
-				CongratulateDialog.popup_centered();
+				CongratulateDialog.rect_position = get_viewport_rect().size/2-Vector2(81,53)-Vector2(34,0);
+				CongratulateDialog.show(); 
 		init_highscore();
 
 	savegame.open(save_path, File.WRITE);

@@ -111,6 +111,14 @@ text = "00"
 align = 1
 valign = 1
 
+[node name="redPlay" type="ColorRect" parent="Game/GUI/MarginContainer/HBoxContainer/redBG"]
+visible = false
+margin_left = 11.0
+margin_top = 24.0
+margin_right = 28.0
+margin_bottom = 27.0
+color = Color( 0.968627, 0.968627, 0.470588, 1 )
+
 [node name="CenterContainer" type="CenterContainer" parent="Game/GUI/MarginContainer/HBoxContainer"]
 margin_left = 47.0
 margin_right = 92.0
@@ -155,6 +163,14 @@ custom_fonts/font = SubResource( 11 )
 text = "00"
 align = 1
 valign = 1
+
+[node name="bluePlay" type="ColorRect" parent="Game/GUI/MarginContainer/HBoxContainer/blueBG"]
+visible = false
+margin_left = 11.0
+margin_top = 24.0
+margin_right = 28.0
+margin_bottom = 27.0
+color = Color( 0.968627, 0.968627, 0.470588, 1 )
 
 [node name="TileMap" type="TileMap" parent="Game"]
 position = Vector2( 11, 71 )

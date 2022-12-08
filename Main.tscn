@@ -356,8 +356,6 @@ custom_fonts/font = SubResource( 7 )
 text = "确认"
 
 [node name="CongratulateDialog" type="AcceptDialog" parent="Game"]
-margin_right = 162.0
-margin_bottom = 110.0
 theme = SubResource( 10 )
 window_title = "恭喜！"
 
